@@ -13,6 +13,7 @@ import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.repository.utente.UtenteRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class UtenteServiceImpl implements UtenteService {
 	
 	@Autowired
@@ -71,12 +72,12 @@ public class UtenteServiceImpl implements UtenteService {
 		return listAllUtenti();
 	}
 
-	@Override
+	@Transactional(readOnly = true)
 	public Utente findByUsernameAndPassword(String username, String password) {
 		return repository.findByUsernameAndPassword(username, password);
 	}
 
-	@Override
+	@Transactional(readOnly = true)
 	public void changeUserAbilitation(Long id) {
 		Utente utenteInstance = caricaSingoloUtente(id);
 		if (utenteInstance == null)

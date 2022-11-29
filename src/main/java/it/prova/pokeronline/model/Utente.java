@@ -54,11 +54,12 @@ public class Utente {
 	private Set<Ruolo> ruoli = new HashSet<>(0);
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "tavolo_id", nullable = false)
+	@JoinColumn(name = "tavolo_id")
 	private Tavolo tavolo; 
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utente")
-	private Set<Tavolo> tavoliCreati = new HashSet<Tavolo>(0);
+	//Non ci interessa dato un Utente quali tavoli ha creato
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utenteCreazione")
+//	private Set<Tavolo> tavoliCreati = new HashSet<Tavolo>(0);
 
 	public Utente() {
 	}
@@ -75,10 +76,6 @@ public class Utente {
 		this.cognome = cognome;
 		this.dataRegistrazione = dataRegistrazione;
 	}
-
-	
-
-	
 
 	public Utente(Long id, String username, String password, String nome, String cognome, LocalDate dataRegistrazione,
 			StatoUtente stato, Integer esperienzaAccumulata, Integer creditoAccumulato) {
@@ -158,13 +155,13 @@ public class Utente {
 		this.tavolo = tavolo;
 	}
 
-	public Set<Tavolo> getTavoliCreati() {
-		return tavoliCreati;
-	}
-
-	public void setTavoliCreati(Set<Tavolo> tavoliCreati) {
-		this.tavoliCreati = tavoliCreati;
-	}
+//	public Set<Tavolo> getTavoliCreati() {
+//		return tavoliCreati;
+//	}
+//
+//	public void setTavoliCreati(Set<Tavolo> tavoliCreati) {
+//		this.tavoliCreati = tavoliCreati;
+//	}
 
 	public StatoUtente getStato() {
 		return stato;

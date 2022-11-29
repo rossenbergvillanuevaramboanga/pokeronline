@@ -50,8 +50,6 @@ public class UtenteDTO {
 	private Long[] ruoliIds;
 	
 	private TavoloDTO tavolo;
-	
-	private Set<TavoloDTO> tavoloDTOCreati = new HashSet<TavoloDTO>(0);
 
 	public UtenteDTO() {
 	}
@@ -160,14 +158,6 @@ public class UtenteDTO {
 
 	public void setTavolo(TavoloDTO tavolo) {
 		this.tavolo = tavolo;
-	}
-
-	public Set<TavoloDTO> getTavoloDTOCreati() {
-		return tavoloDTOCreati;
-	}
-
-	public void setTavoloDTOCreati(Set<TavoloDTO> tavoloDTOCreati) {
-		this.tavoloDTOCreati = tavoloDTOCreati;
 	}
 
 	public StatoUtente getStato() {

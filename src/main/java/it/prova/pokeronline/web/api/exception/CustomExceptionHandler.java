@@ -56,5 +56,19 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
 	}
+	
+	//TavoloNotCreatedByCurrentUserException
+	@ExceptionHandler(TavoloNotCreatedByCurrentUserException.class)
+	public ResponseEntity<Object> handleTavoloNotCreatedByCurrentUserException(TavoloNotCreatedByCurrentUserException ex, WebRequest request) {
+
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("message", ex.getMessage());
+		body.put("status", HttpStatus.NOT_FOUND);
+
+		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+	}
+	
+	
 
 }

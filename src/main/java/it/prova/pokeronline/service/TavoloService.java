@@ -21,6 +21,8 @@ public interface TavoloService {
 	void rimuovi(Long id);
 
 	List<Tavolo> findAllSpecialPlayer(String name);
+
+	Tavolo caricaSingoloElementoSpecialPlayer(Long idTavolo, Long idUtente);
 	
 
 }

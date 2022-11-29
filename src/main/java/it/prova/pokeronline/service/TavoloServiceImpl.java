@@ -45,15 +45,16 @@ public class TavoloServiceImpl implements TavoloService {
 	@Override
 	@Transactional(readOnly = true)
 	public Tavolo caricaSingoloElemento(Long id) {
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-				.anyMatch(roleItem -> roleItem.getAuthority().equals(Ruolo.ROLE_SPECIAL_PLAYER))) {
-			return repository.findByIdSpecialPlayer(id, utenteRepository
-					.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).get().getId())
-					.orElse(null);
-		}
-
 		return repository.findById(id).orElse(null);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Tavolo caricaSingoloElementoSpecialPlayer(Long idTavolo,Long idUtente) {
+		return repository.findByIdSpecialPlayer(idTavolo, idUtente).orElse(null);
+	}
+	
+	
 
 	@Override
 	@Transactional(readOnly = true)

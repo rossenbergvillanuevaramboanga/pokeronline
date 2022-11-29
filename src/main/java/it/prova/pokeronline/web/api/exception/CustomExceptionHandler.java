@@ -44,8 +44,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
 	}
-	
-	//GiocatoriPresentiException
+
+	// GiocatoriPresentiException
 	@ExceptionHandler(GiocatoriPresentiException.class)
 	public ResponseEntity<Object> handleGiocatoriPresentiException(GiocatoriPresentiException ex, WebRequest request) {
 
@@ -56,10 +56,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
 	}
-	
-	//TavoloNotCreatedByCurrentUserException
+
+	// TavoloNotCreatedByCurrentUserException
 	@ExceptionHandler(TavoloNotCreatedByCurrentUserException.class)
-	public ResponseEntity<Object> handleTavoloNotCreatedByCurrentUserException(TavoloNotCreatedByCurrentUserException ex, WebRequest request) {
+	public ResponseEntity<Object> handleTavoloNotCreatedByCurrentUserException(
+			TavoloNotCreatedByCurrentUserException ex, WebRequest request) {
 
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("timestamp", LocalDateTime.now());
@@ -68,10 +69,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
 	}
-	
-	//IdNotNullForInsertException
+
+	// IdNotNullForInsertException
 	@ExceptionHandler(IdNotNullForInsertException.class)
-	public ResponseEntity<Object> handleIdNotNullForInsertException(IdNotNullForInsertException ex, WebRequest request) {
+	public ResponseEntity<Object> handleIdNotNullForInsertException(IdNotNullForInsertException ex,
+			WebRequest request) {
 
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("timestamp", LocalDateTime.now());
@@ -80,8 +82,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
 	}
-	
-	
-	
+
+	// UtenteCreazioneNotNullForInsertionException
+	@ExceptionHandler(UtenteCreazioneNotNullForInsertException.class)
+	public ResponseEntity<Object> handleUtenteCreazioneNotNullForInsertionException(
+			UtenteCreazioneNotNullForInsertException ex, WebRequest request) {
+
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("message", ex.getMessage());
+		body.put("status", HttpStatus.NOT_FOUND);
+
+		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+	}
 
 }

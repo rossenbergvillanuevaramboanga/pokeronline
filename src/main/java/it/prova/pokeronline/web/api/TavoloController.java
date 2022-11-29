@@ -2,20 +2,28 @@ package it.prova.pokeronline.web.api;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus;
 
 import it.prova.pokeronline.dto.TavoloDTO;
+import it.prova.pokeronline.dto.UtenteDTO;
 import it.prova.pokeronline.model.Ruolo;
 import it.prova.pokeronline.model.Tavolo;
 import it.prova.pokeronline.service.TavoloService;
 import it.prova.pokeronline.service.UtenteService;
-import it.prova.pokeronline.web.api.exception.TavoloNotCreatedByCurrentUserException;
+import it.prova.pokeronline.web.api.exception.IdNotNullForInsertException;
 import it.prova.pokeronline.web.api.exception.TavoloNotFoundException;
+import it.prova.pokeronline.web.api.exception.UtenteCreazioneNotNullForInsertException;
 
 @Controller
 @RequestMapping("/api/tavolo")
@@ -33,7 +41,7 @@ public class TavoloController {
 	@GetMapping
 	public List<TavoloDTO> getAll() {
 
-		/*Se UTENTE_SPECIAL, posso vedere solo i tavoli che hanno creato*/
+		/*Se SPECIAL_PLAYER, posso vedere solo i tavoli che hanno creato*/
 		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(
 				roleItem -> 
 				roleItem.getAuthority().equals(Ruolo.ROLE_SPECIAL_PLAYER)))
@@ -63,9 +71,29 @@ public class TavoloController {
 			throw new TavoloNotFoundException("Tavolo not found con id: " + id);
 
 		return TavoloDTO.buildTavoloDTOFromModelNoPassword(tavolo, true);
+		/*Gli utenti CLASSIC_PLAYER verranno bloccati a livello del filtro*/
+	}
+	
+	//Create, Update, Delete 
+	
+	/*Create può essere effettuato da ADMIN o SPECIAL_PLAYER*/
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public TavoloDTO createNew(@Valid @RequestBody TavoloDTO tavoloInput) {
+		
+		//Controlli
+		if (tavoloInput.getId() != null) throw new IdNotNullForInsertException("Non è ammesso fornire un id per la creazione");
+		if (tavoloInput.getUtenteDTOCreazione() != null) throw new UtenteCreazioneNotNullForInsertException("Non è ammesso fornire un Utente per la creazione");
+
+		// UtenteCreazione = utente in sessione
+		tavoloInput.setUtenteDTOCreazione(UtenteDTO.buildUtenteDTOFromModelNoPassword(utenteService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())));
+		// Inserimento nella base dati
+		Tavolo tavoloInserito = tavoloService.inserisciNuovo(tavoloInput.buildTavoloModel());
+
+		return TavoloDTO.buildTavoloDTOFromModel(tavoloInserito, false);
 	}
 	
 	
-
-
+	
+	
 }

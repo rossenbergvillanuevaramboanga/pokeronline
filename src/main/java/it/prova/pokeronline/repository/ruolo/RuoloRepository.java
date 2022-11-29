@@ -6,4 +6,6 @@ import it.prova.pokeronline.model.Ruolo;
 
 public interface RuoloRepository extends CrudRepository<Ruolo, Long> {
 
+	Ruolo findByDescrizioneAndCodice(String descrizione, String codice);
+
 }

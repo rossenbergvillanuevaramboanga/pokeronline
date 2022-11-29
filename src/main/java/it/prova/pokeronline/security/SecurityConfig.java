@@ -42,19 +42,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.cors() // Enabling cors
 				.and()
 				.authorizeHttpRequests()
+				
+				//chiunque può fare il login
 				.antMatchers("/api/auth/login").permitAll()
 				
-				//accesso al database
-				.antMatchers("/h2-console/**").permitAll()
-				
 				// tutti gli utenti autenticati possono richiedere le info
-				.antMatchers("/api/utente/userInfo").authenticated().antMatchers("/api/utente/**").hasRole("ADMIN")
+				.antMatchers("/api/utente/userInfo").authenticated()
+				
+				//Solo gli ADMIN sono in grado di fare il CRUD di UTENTI
+				.antMatchers("/api/utente/**").hasRole("ADMIN")
+				
+				//Solo gli ADMIN e SPECIAL_PLAYER sono in grado di fare il CRUD di TAVOLO
+				.antMatchers("/api/tavolo/**").hasAnyRole("ADMIN", "SPECIAL_PLAYER")
+				
+				//l'applicazione è accedibile da chiunque sia loggato
 				.antMatchers("/**").hasAnyRole("ADMIN", "CLASSIC_PLAYER", "SPECIAL_PLAYER")
+				
 				// .antMatchers("/anonymous*").anonymous()
 				.anyRequest().authenticated().and()
 
 				// imposto il mio custom user details service
 				.userDetailsService(customUserDetailsService)
+				
 				// quando qualcosa fallisce ho il mio handler che customizza la response
 				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 
@@ -64,8 +73,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// Adding the JWT filter
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		
-		//accesso al database
-		http.headers().frameOptions().disable();
 	}
 
 }

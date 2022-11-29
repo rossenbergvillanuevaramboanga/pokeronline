@@ -17,13 +17,13 @@ public interface TavoloRepository extends CrudRepository<Tavolo, Long>, CustomTa
 	Tavolo findByIdEager(Long id);
 	
 	Tavolo findByDenominazione(String denominazione);
-
+	
+	Optional<Tavolo> findByGiocatori_id(Long id);
+	
 	@Query("select t from Tavolo t join t.utenteCreazione where t.utenteCreazione.id = ?1")
 	List<Tavolo> findAllSpecialPlayer(Long id);
 
 	@Query("select t from Tavolo t join t.utenteCreazione where t.id = ?1 and t.utenteCreazione.id = ?2")
 	Optional<Tavolo> findByIdSpecialPlayer(Long idTavolo, Long idUtente);
-	
-	Optional<Tavolo> findByGiocatori_id(Long id);
 
 }

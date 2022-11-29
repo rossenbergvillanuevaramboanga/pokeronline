@@ -34,6 +34,13 @@ public class TavoloServiceImpl implements TavoloService {
 		return (List<Tavolo>) repository.findAll();
 
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Tavolo> findAllSpecialPlayer(String name) {
+		// TODO Auto-generated method stub
+		return repository.findAllSpecialPlayer(utenteRepository.findByUsername(name).get().getId());
+	}
 
 	@Override
 	@Transactional(readOnly = true)
@@ -53,7 +60,8 @@ public class TavoloServiceImpl implements TavoloService {
 	public Tavolo caricaSingoloElementoEager(Long id) {
 		return repository.findByIdEager(id);
 	}
-
+	
+	//Aggiornamento possibile solo se non ci sono giocatori
 	@Override
 	@Transactional
 	public Tavolo aggiorna(Tavolo tavoloInstance, Tavolo tavoloCaricatoDalDB) {
@@ -63,7 +71,8 @@ public class TavoloServiceImpl implements TavoloService {
 
 		return repository.save(tavoloInstance);
 	}
-
+	
+	
 	@Override
 	@Transactional
 	public Tavolo inserisciNuovo(Tavolo tavoloInstance) {
@@ -73,6 +82,7 @@ public class TavoloServiceImpl implements TavoloService {
 		return repository.save(tavoloInstance);
 	}
 
+	//Eliminazione possibile solo se non ci sono giocatori
 	@Override
 	@Transactional
 	public void rimuovi(Long id) {
@@ -85,5 +95,7 @@ public class TavoloServiceImpl implements TavoloService {
 
 		repository.deleteById(id);
 	}
+
+	
 
 }

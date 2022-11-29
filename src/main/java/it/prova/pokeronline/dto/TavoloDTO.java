@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotBlank;
+
 import it.prova.pokeronline.model.Tavolo;
 import it.prova.pokeronline.model.Utente;
 
@@ -13,10 +15,13 @@ public class TavoloDTO {
 	
 	private Long id;
 	
+	@NotBlank(message = "{esperienzaminima.notblank}")
 	private Integer esperienzaMinima;
 	
+	@NotBlank(message = "{ciframinima.notblank}")
 	private Integer cifraMinima;
 	
+	@NotBlank(message = "{denominazione.notblank}")
 	private String denominazione;
 	
 	private LocalDate dateCreated;
@@ -24,7 +29,6 @@ public class TavoloDTO {
 	// Connection 
 	
 	private Set<UtenteDTO> giocatoriDTO = new HashSet<UtenteDTO>(0);
-	
 	private UtenteDTO utenteDTOCreazione;
 	
 	public TavoloDTO() {

@@ -64,6 +64,8 @@ public class TavoloController {
 
 		return TavoloDTO.buildTavoloDTOFromModelNoPassword(tavolo, true);
 	}
+	
+	
 
 
 }

@@ -76,12 +76,7 @@ public class Utente {
 		this.dataRegistrazione = dataRegistrazione;
 	}
 
-	public Utente(Long id, String username, String password, String nome, String cognome, String email,
-			LocalDate dataRegistrazione, StatoUtente stato) {
-		this(username, password, nome, cognome, dataRegistrazione);
-		this.id = id;
-		this.stato = stato;
-	}
+	
 
 	
 

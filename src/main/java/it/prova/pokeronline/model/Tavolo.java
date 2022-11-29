@@ -37,7 +37,7 @@ public class Tavolo {
 	private LocalDate dateCreated;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "tavolo")
-	private Set<Utente> utentiGiocatori = new HashSet<Utente>(0);
+	private Set<Utente> giocatori = new HashSet<Utente>(0);
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "utente_id", nullable = false)
@@ -116,12 +116,13 @@ public class Tavolo {
 		this.dateCreated = dateCreated;
 	}
 
-	public Set<Utente> getUtentiGiocatori() {
-		return utentiGiocatori;
+	
+	public Set<Utente> getGiocatori() {
+		return giocatori;
 	}
 
-	public void setUtentiGiocatori(Set<Utente> utentiGiocatori) {
-		this.utentiGiocatori = utentiGiocatori;
+	public void setGiocatori(Set<Utente> giocatori) {
+		this.giocatori = giocatori;
 	}
 
 	public Utente getUtenteCreazione() {

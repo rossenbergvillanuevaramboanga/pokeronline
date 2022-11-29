@@ -3,11 +3,13 @@ package it.prova.pokeronline.dto;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
 
 import it.prova.pokeronline.model.Ruolo;
 import it.prova.pokeronline.model.StatoUtente;
@@ -61,6 +63,46 @@ public class UtenteDTO {
 		this.nome = nome;
 		this.cognome = cognome;
 		this.stato = stato;
+	}
+
+	public UtenteDTO(Long id,
+			String username,
+			String password,
+			String nome,
+			String cognome, 
+			LocalDate dataRegistrazione, 
+			StatoUtente stato,
+			Integer esperienzaAccumulata, 
+			Integer creditoAccumulato) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.nome = nome;
+		this.cognome = cognome;
+		this.dataRegistrazione = dataRegistrazione;
+		this.stato = stato;
+		this.esperienzaAccumulata = esperienzaAccumulata;
+		this.creditoAccumulato = creditoAccumulato;
+	}
+	
+	public UtenteDTO(Long id,
+			String username,
+			String nome,
+			String cognome, 
+			LocalDate dataRegistrazione, 
+			StatoUtente stato,
+			Integer esperienzaAccumulata, 
+			Integer creditoAccumulato) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.nome = nome;
+		this.cognome = cognome;
+		this.dataRegistrazione = dataRegistrazione;
+		this.stato = stato;
+		this.esperienzaAccumulata = esperienzaAccumulata;
+		this.creditoAccumulato = creditoAccumulato;
 	}
 
 	public Long getId() {
@@ -153,7 +195,8 @@ public class UtenteDTO {
 	}
 
 	public Utente buildUtenteModel(boolean includeIdRoles) {
-		Utente result = new Utente(this.id, this.username, this.password, this.nome, this.cognome, this.dataRegistrazione, this.stato, this.esperienzaAccumulata, this.creditoAccumulato);
+		Utente result = new Utente(this.id, this.username, this.password, this.nome, this.cognome,
+				this.dataRegistrazione, this.stato, this.creditoAccumulato, this.esperienzaAccumulata);
 		if (includeIdRoles && ruoliIds != null)
 			result.setRuoli(Arrays.asList(ruoliIds).stream().map(id -> new Ruolo(id)).collect(Collectors.toSet()));
 
@@ -161,8 +204,16 @@ public class UtenteDTO {
 	}
 
 	public static UtenteDTO buildUtenteDTOFromModel(Utente utenteModel) {
-		UtenteDTO result = new UtenteDTO(utenteModel.getId(), utenteModel.getUsername(), utenteModel.getNome(),
-				utenteModel.getCognome(), utenteModel.getStato());
+		UtenteDTO result = new UtenteDTO(
+				utenteModel.getId(), 
+				utenteModel.getUsername(), 
+				utenteModel.getPassword(),
+				utenteModel.getNome(), 
+				utenteModel.getCognome(), 
+				utenteModel.getDataRegistrazione(),
+				utenteModel.getStato(), 
+				utenteModel.getEsperienzaAccumulata(), 
+				utenteModel.getCreditoAccumulato());
 
 		if (!utenteModel.getRuoli().isEmpty())
 			result.ruoliIds = utenteModel.getRuoli().stream().map(r -> r.getId()).collect(Collectors.toList())
@@ -170,5 +221,34 @@ public class UtenteDTO {
 
 		return result;
 	}
+
+	public static UtenteDTO buildUtenteDTOFromModelNoPassword(Utente utenteModel) {
+		UtenteDTO result = new UtenteDTO(
+				utenteModel.getId(), 
+				utenteModel.getUsername(), 
+				utenteModel.getNome(),
+				utenteModel.getCognome(), 
+				utenteModel.getDataRegistrazione(), 
+				utenteModel.getStato(),
+				utenteModel.getEsperienzaAccumulata(), 
+				utenteModel.getCreditoAccumulato());
+
+		if (!utenteModel.getRuoli().isEmpty())
+			result.ruoliIds = utenteModel.getRuoli().stream().map(r -> r.getId()).collect(Collectors.toList())
+					.toArray(new Long[] {});
+
+		return result;
+	}
+
+	public static List<UtenteDTO> buildUtenteDTOListFromModelList(List<Utente> modelList) {
+		return modelList.stream().map(entity -> UtenteDTO.buildUtenteDTOFromModel(entity)).collect(Collectors.toList());
+	}
+
+	public static Set<UtenteDTO> buildUtenteDTOSetFromModelSet(Set<Utente> modelList) {
+		return (Set<UtenteDTO>) modelList.stream().map(entity -> UtenteDTO.buildUtenteDTOFromModelNoPassword(entity))
+				.collect(Collectors.toSet());
+	}
+	
+	
 
 }

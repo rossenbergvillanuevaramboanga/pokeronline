@@ -2,12 +2,12 @@ package it.prova.pokeronline.dto;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
-import org.aspectj.runtime.internal.cflowstack.ThreadStackFactoryImpl;
+import java.util.stream.Collectors;
 
 import it.prova.pokeronline.model.Tavolo;
-import net.bytebuddy.asm.Advice.This;
+import it.prova.pokeronline.model.Utente;
 
 public class TavoloDTO {
 	
@@ -23,7 +23,7 @@ public class TavoloDTO {
 	
 	// Connection 
 	
-	private Set<UtenteDTO> utentiGiocatori = new HashSet<UtenteDTO>(0);
+	private Set<UtenteDTO> giocatoriDTO = new HashSet<UtenteDTO>(0);
 	
 	private UtenteDTO utenteDTOCreazione;
 	
@@ -42,14 +42,14 @@ public class TavoloDTO {
 	}
 
 	public TavoloDTO(Long id, Integer esperienzaMinima, Integer cifraMinima, String denominazione,
-			LocalDate dateCreated, Set<UtenteDTO> utentiGiocatori, UtenteDTO utenteDTOCreazione) {
+			LocalDate dateCreated, Set<UtenteDTO> giocatori, UtenteDTO utenteDTOCreazione) {
 		super();
 		this.id = id;
 		this.esperienzaMinima = esperienzaMinima;
 		this.cifraMinima = cifraMinima;
 		this.denominazione = denominazione;
 		this.dateCreated = dateCreated;
-		this.utentiGiocatori = utentiGiocatori;
+		this.giocatoriDTO = giocatori;
 		this.utenteDTOCreazione = utenteDTOCreazione;
 	}
 
@@ -93,12 +93,14 @@ public class TavoloDTO {
 		this.dateCreated = dateCreated;
 	}
 
-	public Set<UtenteDTO> getUtentiGiocatori() {
-		return utentiGiocatori;
+	
+
+	public Set<UtenteDTO> getGiocatoriDTO() {
+		return giocatoriDTO;
 	}
 
-	public void setUtentiGiocatori(Set<UtenteDTO> utentiGiocatori) {
-		this.utentiGiocatori = utentiGiocatori;
+	public void setGiocatoriDTO(Set<UtenteDTO> giocatoriDTO) {
+		this.giocatoriDTO = giocatoriDTO;
 	}
 
 	public UtenteDTO getUtenteDTOCreazione() {
@@ -110,15 +112,63 @@ public class TavoloDTO {
 	}
 	
 	public Tavolo buildTavoloModel() {
-		return new Tavolo(this.id, this.esperienzaMinima, this.cifraMinima, this.denominazione, this.dateCreated,  this.utenteDTOCreazione.buildUtenteModel(false));
+		Tavolo result = new Tavolo(this.id, this.esperienzaMinima, this.cifraMinima, this.denominazione, this.dateCreated);
+		
+		if(this.giocatoriDTO.size() > 1) {
+			Set<Utente> set = result.getGiocatori();
+			this.giocatoriDTO.forEach(utente -> set.add(utente.buildUtenteModel(false)));
+		}
+		
+		if(this.utenteDTOCreazione != null)
+			result.setUtenteCreazione(this.utenteDTOCreazione.buildUtenteModel(false));
+			
+		return result;
+	}
+
+	public static TavoloDTO buildTavoloDTOFromModel(Tavolo tavoloModel, boolean includeGiocatori) {
+
+		TavoloDTO result = new TavoloDTO(tavoloModel.getId(), tavoloModel.getEsperienzaMinima(),
+				tavoloModel.getCifraMinima(), tavoloModel.getDenominazione(), tavoloModel.getDateCreated());
+
+		if (tavoloModel.getUtenteCreazione() != null && tavoloModel.getUtenteCreazione().getId() != null
+				&& tavoloModel.getUtenteCreazione().getId() > 0) {
+			result.setUtenteDTOCreazione(UtenteDTO.buildUtenteDTOFromModel(tavoloModel.getUtenteCreazione()));
+		}
+
+		if (tavoloModel.getGiocatori() != null && !tavoloModel.getGiocatori().isEmpty()) {
+			result.setGiocatoriDTO(UtenteDTO.buildUtenteDTOSetFromModelSet(tavoloModel.getGiocatori()));
+		}
+
+		return result;
 	}
 	
-	public static TavoloDTO buildTavoloDTOFromModel(Tavolo tavoloModel, boolean includeUtenteCreazione) {
-		TavoloDTO result = new TavoloDTO(tavoloModel.getId(), tavoloModel.getEsperienzaMinima(), tavoloModel.getCifraMinima(), tavoloModel.getDenominazione(), tavoloModel.getDateCreated());
-		
-		if(includeUtenteCreazione)
-			result.setUtenteDTOCreazione(UtenteDTO.buildUtenteDTOFromModel(tavoloModel.getUtenteCreazione()));
+	public static TavoloDTO buildTavoloDTOFromModelNoPassword(Tavolo tavoloModel, boolean includeGiocatori) {
+
+		TavoloDTO result = new TavoloDTO(tavoloModel.getId(), tavoloModel.getEsperienzaMinima(),
+				tavoloModel.getCifraMinima(), tavoloModel.getDenominazione(), tavoloModel.getDateCreated());
+
+		if (tavoloModel.getUtenteCreazione() != null && tavoloModel.getUtenteCreazione().getId() != null
+				&& tavoloModel.getUtenteCreazione().getId() > 0) {
+			result.setUtenteDTOCreazione(UtenteDTO.buildUtenteDTOFromModelNoPassword(tavoloModel.getUtenteCreazione()));
+		}
+
+		if (tavoloModel.getGiocatori() != null && !tavoloModel.getGiocatori().isEmpty()) {
+			result.setGiocatoriDTO(UtenteDTO.buildUtenteDTOSetFromModelSet(tavoloModel.getGiocatori()));
+		}
+
 		return result;
+	}
+
+	public static List<TavoloDTO> createTavoloDTOListFromModelList(List<Tavolo> modelListInput,
+			boolean includeGiocatori) {
+
+		return modelListInput.stream().map(tavoloEntity -> {
+			TavoloDTO result = TavoloDTO.buildTavoloDTOFromModelNoPassword(tavoloEntity, includeGiocatori);
+
+			if (includeGiocatori)
+				result.setGiocatoriDTO(UtenteDTO.buildUtenteDTOSetFromModelSet(tavoloEntity.getGiocatori()));
+			return result;
+		}).collect(Collectors.toList());
 	}
 	
 	

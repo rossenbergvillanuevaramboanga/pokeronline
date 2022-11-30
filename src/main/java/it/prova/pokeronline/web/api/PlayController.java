@@ -14,6 +14,11 @@ import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.service.TavoloService;
 import it.prova.pokeronline.service.UtenteService;
 import it.prova.pokeronline.web.api.exception.CreditNotValidException;
+import it.prova.pokeronline.web.api.exception.TavoloNotFoundException;
+import it.prova.pokeronline.web.api.exception.UtenteAlreadyInGameException;
+import it.prova.pokeronline.web.api.exception.UtenteNotEnoughCreditoException;
+import it.prova.pokeronline.web.api.exception.UtenteNotEnoughExperienceException;
+import it.prova.pokeronline.web.api.exception.UtenteNotInGameException;
 
 import java.util.List;
 
@@ -38,20 +43,19 @@ public class PlayController {
 	 *  vorrebbe un payment provider tipo Paypal).*/
 	
 	@PostMapping("/buy/{credito}")
-	@ResponseStatus(HttpStatus.CREATED)
-	public UtenteDTO compraCredito(@PathVariable(value ="credito", required = true) Integer credito) {
+	@ResponseStatus(HttpStatus.OK)
+	public void compraCredito(@PathVariable(value ="credito", required = true) Integer credito) {
 		if(credito == null | credito < 1) throw new CreditNotValidException("Credito deve essere maggiore di zero.");
 		Utente utenteLoggato = utenteService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		utenteLoggato.setCreditoAccumulato( utenteLoggato.getCreditoAccumulato() + credito);
 		utenteLoggato = utenteService.aggiorna(utenteLoggato);
-		return UtenteDTO.buildUtenteDTOFromModelNoPassword(utenteLoggato);
 	}
 	
 	/*
 	 * DAMMI IL LAST GAME (restituisce un valore solo se io sono ancora 
 	 * nel set di qualche tavolo).*/
 	@GetMapping("/lastgame")
-	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseStatus(HttpStatus.OK)
 	public TavoloDTO lastGame() {
 		Utente utenteLoggato = utenteService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		Tavolo lastGameTavolo = tavoloService.findLastGame(utenteLoggato);
@@ -64,23 +68,26 @@ public class PlayController {
 	 * immediatamente un bug cioè qualcuno per accumulare esperienza potrebbe 
 	 * entrare e uscire n volte senza giocare. Ma a noi non importa...).*/
 	
-	@GetMapping("/leavegame")
-	@ResponseStatus(HttpStatus.CREATED)
-	public UtenteDTO leaveGame() {
+	@PostMapping("/leavegame")
+	@ResponseStatus(HttpStatus.OK)
+	public void leaveGame() {
+		
 		Utente utenteLoggato = utenteService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-		Tavolo gameTavolo = tavoloService.findLastGame(utenteLoggato);
-		if (gameTavolo == null) return null;
+		
+		if (this.lastGame() == null) throw new UtenteNotInGameException("L'utente non è in alcuna partita.");
+		
+		Tavolo gameTavolo = this.lastGame().buildTavoloModel(); 
+		
 		utenteLoggato.setEsperienzaAccumulata(utenteLoggato.getEsperienzaAccumulata() + 1);
 		gameTavolo.getGiocatori().remove(utenteLoggato);
+		
 		tavoloService.aggiorna(gameTavolo);
 		utenteService.aggiorna(utenteLoggato);
-		return UtenteDTO.buildUtenteDTOFromModelNoPassword(utenteLoggato);
 	}
 	
 	/*RICERCA (ricerca solo i tavoli in cui esperienza minima <= esperienza 
 	 * accumulata).*/
 	@GetMapping("/findtavoli")
-	@ResponseStatus(HttpStatus.CREATED)
 	public List<TavoloDTO> findTavoli() {
 		Utente utenteLoggato = utenteService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		List<Tavolo> listaTavoli = tavoloService.findEsperienzaMinima(utenteLoggato.getEsperienzaAccumulata()) ;
@@ -91,15 +98,30 @@ public class PlayController {
 	 * GIOCA PARTITA A DETERMINATO TAVOLO inviato come input ovviamente 
 	 * (Gestire a piacere il caso credito < cifra minima)*/
 	@PostMapping("/startgame/{idtavolo}")
-	@ResponseStatus(HttpStatus.CREATED)
-	public UtenteDTO startGame(@PathVariable(value ="idtavolo", required = true) long idtavolo){
+	@ResponseStatus(HttpStatus.OK)
+	public void startGame(@PathVariable(value ="idtavolo", required = true) long idtavolo){
 		
 		Utente utenteLoggato = utenteService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		Tavolo tavoloGioco = tavoloService.caricaSingoloElementoEager(idtavolo);
 		
+		if(this.lastGame() != null ) throw new UtenteAlreadyInGameException("L'utente si trova in un tavolo");
+		if(tavoloGioco == null) throw new TavoloNotFoundException("Tavolo non gioco non trovato");
 		
+		//Controllo se l'utente ha l'esperienza necessaria
+		if(utenteLoggato.getEsperienzaAccumulata() < tavoloGioco.getEsperienzaMinima())
+			throw new UtenteNotEnoughExperienceException("L'utente non ha l'esperienza necessaria");
 		
-		return this.leaveGame();
+		//Controllo se l'utente ha sufficiente credito
+		if(utenteLoggato.getCreditoAccumulato() < tavoloGioco.getCifraMinima())
+			throw new UtenteNotEnoughCreditoException("L'utente non ha sufficiente credito");
+		
+		//Aggiungo l'utente al tavolo se non è già presente
+		tavoloGioco.getGiocatori().add(utenteLoggato);
+
+		//Avviamo il gioco
+		utenteService.playGame(utenteLoggato);
 	}
+
 	
 
 }

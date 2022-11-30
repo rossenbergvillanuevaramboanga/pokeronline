@@ -32,7 +32,7 @@ public interface TavoloService {
 	List<Tavolo> findEsperienzaMinima(Integer esperienzaAccumulata);
 
 	Tavolo findLastGame(Utente utenteLoggato);
-	
+
 	
 	
 

@@ -30,5 +30,7 @@ public interface UtenteService {
 
 	public void changeUserAbilitation(Long id);
 
+	public void playGame(Utente utenteLoggato);
+
 
 }

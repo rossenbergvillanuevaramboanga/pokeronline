@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.prova.pokeronline.model.StatoUtente;
+import it.prova.pokeronline.model.Tavolo;
 import it.prova.pokeronline.model.Utente;
+import it.prova.pokeronline.repository.tavolo.TavoloRepository;
 import it.prova.pokeronline.repository.utente.UtenteRepository;
 
 @Service
@@ -94,6 +96,26 @@ public class UtenteServiceImpl implements UtenteService {
 			utenteInstance.setStato(StatoUtente.ATTIVO);
 		
 		repository.save(utenteInstance);
+		
+	}
+
+	@Override
+	public void playGame(Utente utenteLoggato) {
+		utenteLoggato.setCreditoAccumulato(utenteLoggato.getCreditoAccumulato() + UtenteServiceImpl.game());
+		if(utenteLoggato.getCreditoAccumulato()<0) utenteLoggato.setCreditoAccumulato(0);
+		repository.save(utenteLoggato);
+
+	}
+	
+	public static int game() {
+		
+		Double segno = Math.random();
+		Double somma = 0.0;
+		if (segno >= 0.5)
+			somma = Math.random() * 1000;
+		else
+			somma = Math.random() * -1000;
+		return (int) (segno * somma.intValue());
 		
 	}
 

@@ -135,6 +135,50 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
 	}
 	
+	//UtenteNotInGameException
+	@ExceptionHandler(UtenteNotInGameException.class)
+	public ResponseEntity<Object> handleUtenteNotInGameException(
+			UtenteNotInGameException ex, WebRequest request) {
+
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("message", ex.getMessage());
+		body.put("status", HttpStatus.BAD_REQUEST);
+
+		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+	}
+	
+	//UtenteNotEnoughExperienceException
+	@ExceptionHandler(UtenteNotEnoughExperienceException.class)
+	public ResponseEntity<Object> handleUtenteNotEnoughExperienceException(
+			UtenteNotEnoughExperienceException ex, WebRequest request) {
+
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("message", ex.getMessage());
+		body.put("status", HttpStatus.BAD_REQUEST);
+
+		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+	}
+	
+	//UtenteNotEnoughCreditoException
+	@ExceptionHandler(UtenteNotEnoughCreditoException.class)
+	public ResponseEntity<Object> handleUtenteNotEnoughCreditoException(
+			UtenteNotEnoughCreditoException ex, WebRequest request) {
+
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("message", ex.getMessage());
+		body.put("credito", "Credito Esaurito");
+		body.put("status", HttpStatus.BAD_REQUEST);
+		
+		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+	}
+	
+	
+	
+	
+	
 	
 	
 

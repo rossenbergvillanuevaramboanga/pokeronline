@@ -1,15 +1,14 @@
 package it.prova.pokeronline;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Admin;
 
 import it.prova.pokeronline.model.Ruolo;
+import it.prova.pokeronline.model.StatoUtente;
 import it.prova.pokeronline.model.Tavolo;
 import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.service.RuoloService;
@@ -55,27 +54,33 @@ public class PokeronlineApplication implements CommandLineRunner{
 			Utente admin = new Utente("admin", "admin", "Mario", "Rossi", LocalDate.now());
 			admin.getRuoli().add(ruoloServiceInstance.cercaPerDescrizioneECodice("Administrator", Ruolo.ROLE_ADMIN));
 			admin.setEsperienzaAccumulata(1000);
+			admin.setCreditoAccumulato(1000);
 			utenteServiceInstance.inserisciNuovo(admin);
 			//Attivazione 
-			utenteServiceInstance.changeUserAbilitation(admin.getId());
+			admin.setStato(StatoUtente.ATTIVO);
+			utenteServiceInstance.aggiorna(admin);
 		}
 
 		if (utenteServiceInstance.findByUsername("player") == null) {
 			Utente classicPlayer = new Utente("player", "player", "Antonio", "Verdi", LocalDate.now());
 			classicPlayer.getRuoli().add(ruoloServiceInstance.cercaPerDescrizioneECodice("Classic Player", Ruolo.ROLE_PLAYER));
 			classicPlayer.setEsperienzaAccumulata(100);
+			classicPlayer.setCreditoAccumulato(1000);
 			utenteServiceInstance.inserisciNuovo(classicPlayer);
 			//Attivazione 
-			utenteServiceInstance.changeUserAbilitation(classicPlayer.getId());
+			classicPlayer.setStato(StatoUtente.ATTIVO);
+			utenteServiceInstance.aggiorna(classicPlayer);
 		}
 		
 		if (utenteServiceInstance.findByUsername("specialplayer") == null) {
 			Utente specialPlayer = new Utente("specialplayer", "specialplayer", "Massimo", "Giallo", LocalDate.now());
 			specialPlayer.getRuoli().add(ruoloServiceInstance.cercaPerDescrizioneECodice("Special Player", Ruolo.ROLE_SPECIAL_PLAYER));
 			specialPlayer.setEsperienzaAccumulata(500);
+			specialPlayer.setCreditoAccumulato(1000);
 			utenteServiceInstance.inserisciNuovo(specialPlayer);
 			//Attivazione 
-			utenteServiceInstance.changeUserAbilitation(specialPlayer.getId());
+			specialPlayer.setStato(StatoUtente.ATTIVO);
+			utenteServiceInstance.aggiorna(specialPlayer);
 		}
 		
 		// TAVOLO
@@ -86,13 +91,13 @@ public class PokeronlineApplication implements CommandLineRunner{
 		}
 		
 		if(tavoloServiceInstance.findByDenominazione("tavolo2") == null) {
-			Tavolo tavolo1 = new Tavolo(0, 200, "tavolo1", LocalDate.now(), utenteServiceInstance.findByUsername("player"));
-			tavoloServiceInstance.inserisciNuovo(tavolo1);
+			Tavolo tavolo2 = new Tavolo(0, 200, "tavolo2", LocalDate.now(), utenteServiceInstance.findByUsername("player"));
+			tavoloServiceInstance.inserisciNuovo(tavolo2);
 		}
 		
 		if(tavoloServiceInstance.findByDenominazione("tavolo3") == null) {
-			Tavolo tavolo1 = new Tavolo(0, 300, "tavolo1", LocalDate.now(), utenteServiceInstance.findByUsername("specialplayer"));
-			tavoloServiceInstance.inserisciNuovo(tavolo1);
+			Tavolo tavolo3 = new Tavolo(0, 300, "tavolo3", LocalDate.now(), utenteServiceInstance.findByUsername("specialplayer"));
+			tavoloServiceInstance.inserisciNuovo(tavolo3);
 		}
 		
 		

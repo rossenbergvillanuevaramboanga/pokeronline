@@ -51,7 +51,7 @@ public class UtenteServiceImpl implements UtenteService {
 
 	@Transactional
 	public void inserisciNuovo(Utente utenteInstance) {
-		utenteInstance.setStato(StatoUtente.CREATO);
+		utenteInstance.setStato(StatoUtente.ATTIVO);
 		utenteInstance.setPassword(passwordEncoder.encode(utenteInstance.getPassword()));
 		utenteInstance.setDataRegistrazione(LocalDate.now());
 		repository.save(utenteInstance);
@@ -89,6 +89,8 @@ public class UtenteServiceImpl implements UtenteService {
 			utenteInstance.setStato(StatoUtente.DISABILITATO);
 		else if (utenteInstance.getStato().equals(StatoUtente.DISABILITATO))
 			utenteInstance.setStato(StatoUtente.ATTIVO);
+		
+		repository.save(utenteInstance);
 		
 	}
 

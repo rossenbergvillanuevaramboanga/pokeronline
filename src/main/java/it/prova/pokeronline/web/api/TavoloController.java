@@ -6,7 +6,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,9 +52,8 @@ public class TavoloController {
 		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(roleItem -> roleItem.getAuthority().equals(Ruolo.ROLE_SPECIAL_PLAYER)))
 			return TavoloDTO.createTavoloDTOListFromModelList(tavoloService.findAllSpecialPlayer(SecurityContextHolder.getContext().getAuthentication().getName()), true);
 
-		/* Se ADMIN, posso vedere tutti i tavoli */
-		return TavoloDTO.createTavoloDTOListFromModelList(tavoloService.listAllElements(false), true);
-
+//		/* Se ADMIN, posso vedere tutti i tavoli */
+		return TavoloDTO.createTavoloDTOListFromModelList(tavoloService.listAllElements(false), false);
 		/* Gli utenti CLASSIC_PLAYER verranno bloccati a livello del filtro */
 	}
 

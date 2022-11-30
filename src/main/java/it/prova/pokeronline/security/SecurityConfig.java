@@ -36,43 +36,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+	protected void configure(HttpSecurity http) throws Exception { 
 		http.csrf().disable() // Disabling csrf
 				.httpBasic().disable() // Disabling http basic
 				.cors() // Enabling cors
 				.and()
-				.authorizeHttpRequests()
 				
-				//chiunque può fare il login
-				.antMatchers("/api/auth/login").permitAll()
-				
-				// tutti gli utenti autenticati possono richiedere le info
-				.antMatchers("/api/utente/userInfo").authenticated()
-				
-				//Solo gli ADMIN sono in grado di fare il CRUD di UTENTI
-				.antMatchers("/api/utente/**").hasRole("ADMIN")
-				
-				//Solo gli ADMIN e SPECIAL_PLAYER sono in grado di fare il CRUD di TAVOLO
-				.antMatchers("/api/tavolo/**").hasAnyRole("ADMIN", "SPECIAL_PLAYER")
-				
-				//l'applicazione è accedibile da chiunque sia loggato
-				.antMatchers("/**").hasAnyRole("ADMIN", "CLASSIC_PLAYER", "SPECIAL_PLAYER")
-				
+				.authorizeHttpRequests() 
+//				.antMatchers("/api/auth/login").permitAll()
+//				//tutti gli utenti autenticati possono richiedere le info
+//				.antMatchers("/api/utente/userInfo").authenticated()
+//				.antMatchers("/api/utente/**").hasRole("ADMIN")
+//				.antMatchers("/api/tavolo/**").hasAnyRole("ADMIN", "SPECIAL_PLAYER")
+//				.antMatchers("/api/playManagement/**").hasAnyRole("ADMIN", "PLAYER", "SPECIAL_PLAYER")
+//				.antMatchers("/**").hasAnyRole("ADMIN", "PLAYER", "SPECIAL_PLAYER")
 				// .antMatchers("/anonymous*").anonymous()
-				.anyRequest().authenticated().and()
-
-				// imposto il mio custom user details service
-				.userDetailsService(customUserDetailsService)
+				.anyRequest().authenticated()
+				.and()
 				
+				// imposto il mio custom user details service
+				.userDetailsService(customUserDetailsService) 
 				// quando qualcosa fallisce ho il mio handler che customizza la response
-				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-
+				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+				.and()
+				
 				// non abbiamo bisogno di una sessione: meglio forzare a stateless
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); 
 
 		// Adding the JWT filter
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-		
 	}
+
 
 }

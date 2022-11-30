@@ -8,14 +8,12 @@ public class UtenteInfoJWTResponseDTO {
 	private String cognome;
 	private String type = "Bearer";
 	private String username;
-	private String email;
 	private List<String> roles;
 
-	public UtenteInfoJWTResponseDTO(String nome, String cognome, String username, String email, List<String> roles) {
+	public UtenteInfoJWTResponseDTO(String nome, String cognome, String username, List<String> roles) {
 		this.nome = nome;
 		this.cognome = cognome;
 		this.username = username;
-		this.email = email;
 		this.roles = roles;
 	}
 
@@ -25,14 +23,6 @@ public class UtenteInfoJWTResponseDTO {
 
 	public void setTokenType(String tokenType) {
 		this.type = tokenType;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getUsername() {

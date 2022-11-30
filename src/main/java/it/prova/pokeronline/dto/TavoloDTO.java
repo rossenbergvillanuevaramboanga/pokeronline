@@ -27,7 +27,6 @@ public class TavoloDTO {
 	private LocalDate dateCreated;
 	
 	// Connection 
-	
 	private Set<UtenteDTO> giocatoriDTO = new HashSet<UtenteDTO>(0);
 	private UtenteDTO utenteDTOCreazione;
 	

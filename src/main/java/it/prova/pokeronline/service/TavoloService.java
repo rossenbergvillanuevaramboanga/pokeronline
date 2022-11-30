@@ -3,6 +3,7 @@ package it.prova.pokeronline.service;
 import java.util.List;
 
 import it.prova.pokeronline.model.Tavolo;
+import it.prova.pokeronline.model.Utente;
 
 public interface TavoloService {
 	
@@ -27,6 +28,10 @@ public interface TavoloService {
 	Tavolo caricaSingoloElementoSpecialPlayer(Long idTavolo, Long idUtente);
 
 	Tavolo findByDenominazione(String string);
+
+	List<Tavolo> findEsperienzaMinima(Integer esperienzaAccumulata);
+
+	Tavolo findLastGame(Utente utenteLoggato);
 	
 	
 	

@@ -46,6 +46,9 @@ public class UtenteServiceImpl implements UtenteService {
 		utenteReloaded.setCognome(utenteInstance.getCognome());
 		utenteReloaded.setUsername(utenteInstance.getUsername());
 		utenteReloaded.setRuoli(utenteInstance.getRuoli());
+		utenteReloaded.setCreditoAccumulato(utenteInstance.getCreditoAccumulato());
+		utenteReloaded.setEsperienzaAccumulata(utenteInstance.getEsperienzaAccumulata());
+		utenteReloaded.setCreditoAccumulato(utenteInstance.getCreditoAccumulato());
 		return repository.save(utenteReloaded);
 	}
 

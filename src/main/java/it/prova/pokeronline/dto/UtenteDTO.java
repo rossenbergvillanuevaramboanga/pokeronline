@@ -48,8 +48,6 @@ public class UtenteDTO {
 	//Relations
 
 	private Long[] ruoliIds;
-	
-	private TavoloDTO tavolo;
 
 	public UtenteDTO() {
 	}
@@ -150,14 +148,6 @@ public class UtenteDTO {
 
 	public void setDataRegistrazione(LocalDate dataRegistrazione) {
 		this.dataRegistrazione = dataRegistrazione;
-	}
-
-	public TavoloDTO getTavolo() {
-		return tavolo;
-	}
-
-	public void setTavolo(TavoloDTO tavolo) {
-		this.tavolo = tavolo;
 	}
 
 	public StatoUtente getStato() {

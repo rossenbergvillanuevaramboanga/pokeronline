@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.prova.pokeronline.model.Ruolo;
 import it.prova.pokeronline.model.Tavolo;
+import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.repository.tavolo.TavoloRepository;
 import it.prova.pokeronline.repository.utente.UtenteRepository;
 import it.prova.pokeronline.web.api.exception.GiocatoriPresentiException;
@@ -87,10 +88,24 @@ public class TavoloServiceImpl implements TavoloService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Tavolo findByDenominazione(String string) {
 		// TODO Auto-generated method stub
 		return repository.findByDenominazione(string).orElse(null);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Tavolo> findEsperienzaMinima(Integer esperienzaAccumulata) {
+		// TODO Auto-generated method stub
+		return repository.findByEsperienzaMinimaLessThan(esperienzaAccumulata);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Tavolo findLastGame(Utente utenteLoggato) {
+		// TODO Auto-generated method stub
+		return repository.findByGiocatori_id(utenteLoggato.getId()).orElse(null);
 	}
 
 	

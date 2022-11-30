@@ -52,9 +52,9 @@ public class Utente {
 	@JoinTable(name = "utente_ruolo", joinColumns = @JoinColumn(name = "utente_id", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "ruolo_id", referencedColumnName = "ID"))
 	private Set<Ruolo> ruoli = new HashSet<>(0);
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "tavolo_id")
-	private Tavolo tavolo; 
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "tavolo_id")
+//	private Tavolo tavolo; 
 
 	//Non ci interessa dato un Utente quali tavoli ha creato
 //	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utenteCreazione")
@@ -146,13 +146,13 @@ public class Utente {
 		this.dataRegistrazione = dataRegistrazione;
 	}
 
-	public Tavolo getTavolo() {
-		return tavolo;
-	}
-
-	public void setTavolo(Tavolo tavolo) {
-		this.tavolo = tavolo;
-	}
+//	public Tavolo getTavolo() {
+//		return tavolo;
+//	}
+//
+//	public void setTavolo(Tavolo tavolo) {
+//		this.tavolo = tavolo;
+//	}
 
 //	public Set<Tavolo> getTavoliCreati() {
 //		return tavoliCreati;

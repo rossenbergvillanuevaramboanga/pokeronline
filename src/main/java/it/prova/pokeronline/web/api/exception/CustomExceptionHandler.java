@@ -91,7 +91,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("timestamp", LocalDateTime.now());
 		body.put("message", ex.getMessage());
-		body.put("status", HttpStatus.NOT_FOUND);
+		body.put("status", HttpStatus.FORBIDDEN);
 
 		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
 	}
@@ -104,9 +104,38 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("timestamp", LocalDateTime.now());
 		body.put("message", ex.getMessage());
-		body.put("status", HttpStatus.NOT_FOUND);
+		body.put("status", HttpStatus.FORBIDDEN);
 
 		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
 	}
+	
+	//CreditNotValidException
+	@ExceptionHandler(CreditNotValidException.class)
+	public ResponseEntity<Object> handleCreditNotValidException(
+			CreditNotValidException ex, WebRequest request) {
+
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("message", ex.getMessage());
+		body.put("status", HttpStatus.NOT_ACCEPTABLE);
+
+		return new ResponseEntity<>(body, HttpStatus.NOT_ACCEPTABLE);
+	}
+	
+	//UtenteAlreadyInGameException
+	@ExceptionHandler(UtenteAlreadyInGameException.class)
+	public ResponseEntity<Object> handleUtenteAlreadyInGameException(
+			UtenteAlreadyInGameException ex, WebRequest request) {
+
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("message", ex.getMessage());
+		body.put("status", HttpStatus.FORBIDDEN);
+
+		return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+	}
+	
+	
+	
 
 }

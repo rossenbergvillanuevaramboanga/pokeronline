@@ -65,11 +65,7 @@ public class TavoloServiceImpl implements TavoloService {
 	//Aggiornamento possibile solo se non ci sono giocatori
 	@Override
 	@Transactional
-	public Tavolo aggiorna(Tavolo tavoloInstance, Tavolo tavoloCaricatoDalDB) {
-		if (tavoloCaricatoDalDB.getGiocatori().size() > 0)
-			throw new GiocatoriPresentiException(
-					"Impossibile modificare questo Tavolo, sono ancora presenti dei giocatori al suo interno");
-
+	public Tavolo aggiorna(Tavolo tavoloInstance) {
 		return repository.save(tavoloInstance);
 	}
 	
@@ -87,14 +83,14 @@ public class TavoloServiceImpl implements TavoloService {
 	@Override
 	@Transactional
 	public void rimuovi(Long id) {
-		Tavolo tavolo = repository.findById(id)
-				.orElseThrow(() -> new TavoloNotFoundException("Tavolo con id " + id + " not found"));
-
-		if (tavolo.getGiocatori().size() > 0)
-			throw new GiocatoriPresentiException(
-					"Impossibile eliminare questo Tavolo, sono ancora presenti dei giocatori al suo interno");
-
 		repository.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public Tavolo findByDenominazione(String string) {
+		// TODO Auto-generated method stub
+		return repository.findByDenominazione(string).orElse(null);
 	}
 
 	

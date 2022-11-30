@@ -14,15 +14,21 @@ public interface TavoloService {
 
 	Tavolo caricaSingoloElementoEager(Long id);
 
-	Tavolo aggiorna(Tavolo tavoloInstance, Tavolo tavoloCaricatoDalDB);
+	Tavolo aggiorna(Tavolo tavoloInstance);
 
 	Tavolo inserisciNuovo(Tavolo tavoloInstance);
 
 	void rimuovi(Long id);
+	
+	// FIND
 
 	List<Tavolo> findAllSpecialPlayer(String name);
 
 	Tavolo caricaSingoloElementoSpecialPlayer(Long idTavolo, Long idUtente);
+
+	Tavolo findByDenominazione(String string);
+	
+	
 	
 
 }

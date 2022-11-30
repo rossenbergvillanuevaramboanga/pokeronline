@@ -38,7 +38,7 @@ public class TavoloController {
 	 * visibilità solo su quelli dove è lui l’utenteCreazione). Non si può
 	 * cancellare né modificare finché ci sono giocatori a quel Tavolo.
 	 */
-	
+
 	@Autowired
 	private TavoloService tavoloService;
 
@@ -49,8 +49,10 @@ public class TavoloController {
 	public List<TavoloDTO> getAll() {
 
 		/* Se SPECIAL_PLAYER, posso vedere solo i tavoli che hanno creato */
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(roleItem -> roleItem.getAuthority().equals(Ruolo.ROLE_SPECIAL_PLAYER)))
-			return TavoloDTO.createTavoloDTOListFromModelList(tavoloService.findAllSpecialPlayer(SecurityContextHolder.getContext().getAuthentication().getName()), true);
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+				.anyMatch(roleItem -> roleItem.getAuthority().equals(Ruolo.ROLE_SPECIAL_PLAYER)))
+			return TavoloDTO.createTavoloDTOListFromModelList(tavoloService
+					.findAllSpecialPlayer(SecurityContextHolder.getContext().getAuthentication().getName()), true);
 
 //		/* Se ADMIN, posso vedere tutti i tavoli */
 		return TavoloDTO.createTavoloDTOListFromModelList(tavoloService.listAllElements(false), false);
@@ -63,16 +65,19 @@ public class TavoloController {
 		Tavolo tavolo = new Tavolo();
 
 		/* Se UTENTE_SPECIAL, posso vedere solo i tavoli che hanno creato */
-		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(
-				roleItem -> roleItem.getAuthority().equals(Ruolo.ROLE_SPECIAL_PLAYER))) {
+		if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+				.anyMatch(roleItem -> roleItem.getAuthority().equals(Ruolo.ROLE_SPECIAL_PLAYER))) {
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
-			tavolo = tavoloService.caricaSingoloElementoSpecialPlayer(id, utenteService.findByUsername(username).getId());
+			tavolo = tavoloService.caricaSingoloElementoSpecialPlayer(id,
+					utenteService.findByUsername(username).getId());
 		}
 
 		/* Se ADMIN, posso vedere tutti i tavoli */
-		else tavolo = tavoloService.caricaSingoloElemento(id);
+		else
+			tavolo = tavoloService.caricaSingoloElemento(id);
 
-		if (tavolo == null) throw new TavoloNotFoundException("Tavolo not found con id: " + id);
+		if (tavolo == null)
+			throw new TavoloNotFoundException("Tavolo not found con id: " + id);
 
 		return TavoloDTO.buildTavoloDTOFromModelNoPassword(tavolo, true);
 		/* Gli utenti CLASSIC_PLAYER verranno bloccati a livello del filtro */
@@ -84,11 +89,14 @@ public class TavoloController {
 	public TavoloDTO createNew(@Valid @RequestBody TavoloDTO tavoloInput) {
 
 		// Controlli
-		if (tavoloInput.getId() != null) throw new IdNotNullForInsertException("Non è ammesso fornire un id per la creazione");
-		if (tavoloInput.getUtenteDTOCreazione() != null) throw new UtenteCreazioneNotNullForInsertException("Non è ammesso fornire un Utente per la creazione");
+		if (tavoloInput.getId() != null)
+			throw new IdNotNullForInsertException("Non è ammesso fornire un id per la creazione");
+		if (tavoloInput.getUtenteDTOCreazione() != null)
+			throw new UtenteCreazioneNotNullForInsertException("Non è ammesso fornire un Utente per la creazione");
 
 		// UtenteCreazione = utente in sessione
-		tavoloInput.setUtenteDTOCreazione(UtenteDTO.buildUtenteDTOFromModelNoPassword(utenteService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())));
+		tavoloInput.setUtenteDTOCreazione(UtenteDTO.buildUtenteDTOFromModelNoPassword(
+				utenteService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())));
 		// Inserimento nella base dati
 		Tavolo tavoloInserito = tavoloService.inserisciNuovo(tavoloInput.buildTavoloModel());
 
@@ -98,30 +106,39 @@ public class TavoloController {
 	/* Update può essere effettuato da ADMIN o SPECIAL_PLAYER */
 	@PutMapping("/{id}")
 	public TavoloDTO update(@Valid @RequestBody TavoloDTO tavoloInput, @PathVariable(required = true) Long id) {
-		//Tavolo tavolo = tavoloService.caricaSingoloElementoEager(id);
+		// Tavolo tavolo = tavoloService.caricaSingoloElementoEager(id);
 		Tavolo tavolo = this.findById(id).buildTavoloModel();
 
 		// Controlli
-		if (tavolo == null) throw new TavoloNotFoundException("Tavolo not found con id: " + id);
-		if (tavoloInput.getUtenteDTOCreazione() == null || tavoloInput.getUtenteDTOCreazione().getId() == null || tavoloInput.getUtenteDTOCreazione().getId() < 1) throw new UtenteCreazioneNotValidException("UtenteCreazione not valid.");
-		if (tavolo.getUtenteCreazione().getId() != tavoloInput.getUtenteDTOCreazione().getId()) throw new UtenteCreazioneNotValidException("UtenteCreazione missmatch.");
-		if (tavolo.getGiocatori().size() > 0) throw new GiocatoriPresentiException("Impossibile modificare questo Tavolo, sono ancora presenti dei giocatori al suo interno");
+		if (tavolo == null)
+			throw new TavoloNotFoundException("Tavolo not found con id: " + id);
+		if (tavoloInput.getUtenteDTOCreazione() == null || tavoloInput.getUtenteDTOCreazione().getId() == null
+				|| tavoloInput.getUtenteDTOCreazione().getId() < 1)
+			throw new UtenteCreazioneNotValidException("UtenteCreazione not valid.");
+		if (tavolo.getUtenteCreazione().getId() != tavoloInput.getUtenteDTOCreazione().getId())
+			throw new UtenteCreazioneNotValidException("UtenteCreazione missmatch.");
+		if (tavolo.getGiocatori().size() > 0)
+			throw new GiocatoriPresentiException(
+					"Impossibile modificare questo Tavolo, sono ancora presenti dei giocatori al suo interno");
 
 		tavoloInput.setId(id);
 		Tavolo tavoloAggiornato = tavoloService.aggiorna(tavoloInput.buildTavoloModel());
 		return TavoloDTO.buildTavoloDTOFromModel(tavoloAggiornato, false);
 	}
-	
+
 	/* Delete può essere effettuato da ADMIN o SPECIAL_PLAYER */
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public void delete(@PathVariable(required = true) Long id) {
 
-		//Tavolo tavolo = tavoloService.caricaSingoloElementoEager(id);
+		// Tavolo tavolo = tavoloService.caricaSingoloElementoEager(id);
 		Tavolo tavolo = this.findById(id).buildTavoloModel();
 		// Controlli
-		if (tavolo == null) throw new TavoloNotFoundException("Tavolo not found con id: " + id);
-		if (tavolo.getGiocatori().size() > 0) throw new GiocatoriPresentiException("Impossibile eliminare questo Tavolo, sono ancora presenti dei giocatori al suo interno");
+		if (tavolo == null)
+			throw new TavoloNotFoundException("Tavolo not found con id: " + id);
+		if (tavolo.getGiocatori().size() > 0)
+			throw new GiocatoriPresentiException(
+					"Impossibile eliminare questo Tavolo, sono ancora presenti dei giocatori al suo interno");
 		tavoloService.rimuovi(id);
 	}
 

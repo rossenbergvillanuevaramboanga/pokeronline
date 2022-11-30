@@ -17,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 @Entity
 @Table(name = "utente")
 public class Utente {
@@ -25,38 +26,38 @@ public class Utente {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
-	
+
 	@Column(name = "username")
 	private String username;
-	
+
 	@Column(name = "password")
 	private String password;
 	@Column(name = "nome")
 	private String nome;
 	@Column(name = "cognome")
 	private String cognome;
-	
+
 	@Column(name = "dataregistrazione")
 	private LocalDate dataRegistrazione;
 
 	@Enumerated(EnumType.STRING)
 	private StatoUtente stato;
-	
+
 	@Column(name = "esperienzaaccumulata")
 	private Integer esperienzaAccumulata;
-	
+
 	@Column(name = "creditoaccumulato")
 	private Integer creditoAccumulato;
 
 	@ManyToMany
 	@JoinTable(name = "utente_ruolo", joinColumns = @JoinColumn(name = "utente_id", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "ruolo_id", referencedColumnName = "ID"))
 	private Set<Ruolo> ruoli = new HashSet<>(0);
-	
+
 //	@ManyToOne(fetch = FetchType.LAZY)
 //	@JoinColumn(name = "tavolo_id")
 //	private Tavolo tavolo; 
 
-	//Non ci interessa dato un Utente quali tavoli ha creato
+	// Non ci interessa dato un Utente quali tavoli ha creato
 //	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utenteCreazione")
 //	private Set<Tavolo> tavoliCreati = new HashSet<Tavolo>(0);
 
@@ -169,8 +170,6 @@ public class Utente {
 	public void setStato(StatoUtente stato) {
 		this.stato = stato;
 	}
-	
-	
 
 	public Integer getEsperienzaAccumulata() {
 		return esperienzaAccumulata;
@@ -195,7 +194,7 @@ public class Utente {
 		}
 		return false;
 	}
-	
+
 	public boolean isPlayer() {
 		for (Ruolo ruoloItem : ruoli) {
 			if (ruoloItem.getCodice().equals(Ruolo.ROLE_PLAYER))
@@ -203,7 +202,7 @@ public class Utente {
 		}
 		return false;
 	}
-	
+
 	public boolean isSpecialPlayer() {
 		for (Ruolo ruoloItem : ruoli) {
 			if (ruoloItem.getCodice().equals(Ruolo.ROLE_SPECIAL_PLAYER))
@@ -219,7 +218,5 @@ public class Utente {
 	public boolean isDisabilitato() {
 		return this.stato != null && this.stato.equals(StatoUtente.DISABILITATO);
 	}
-
-	
 
 }

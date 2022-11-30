@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import it.prova.pokeronline.model.Utente;
 import it.prova.pokeronline.repository.utente.UtenteRepository;
 
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

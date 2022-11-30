@@ -11,9 +11,9 @@ import javax.persistence.Table;
 @Table(name = "ruolo")
 public class Ruolo {
 
-	public static final String ROLE_ADMIN = "ADMIN";
-	public static final String ROLE_PLAYER = "PLAYER";
-	public static final String ROLE_SPECIAL_PLAYER = "SPECIAL_PLAYER";
+	public static final String ROLE_ADMIN = "ROLE_ADMIN";
+	public static final String ROLE_PLAYER = "ROLE_PLAYER";
+	public static final String ROLE_SPECIAL_PLAYER = "ROLE_SPECIAL_PLAYER";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

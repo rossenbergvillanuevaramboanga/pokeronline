@@ -99,10 +99,9 @@ public class UtenteServiceImpl implements UtenteService {
 		
 	}
 
-	@Override
+	@Transactional
 	public void playGame(Utente utenteLoggato) {
 		utenteLoggato.setCreditoAccumulato(utenteLoggato.getCreditoAccumulato() + UtenteServiceImpl.game());
-		if(utenteLoggato.getCreditoAccumulato()<0) utenteLoggato.setCreditoAccumulato(0);
 		repository.save(utenteLoggato);
 
 	}
